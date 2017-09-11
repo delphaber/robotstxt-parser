@@ -2,6 +2,9 @@ module Robotstxt
   class Getter
     include CommonMethods
 
+    # TODO adapt to throw a useful error when URI is invalid,
+    # and/or allow users to pass domain without protocol //jno 2017-09-11
+    #
     # Get the text of a robots.txt file from the given source, see #get.
     def obtain(source, robot_id, options)
       options = {

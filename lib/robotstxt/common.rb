@@ -8,6 +8,8 @@ module Robotstxt
     # Convert a URI or a String into a URI
     def objectify_uri(uri)
 
+        # TODO URI#escape is deprecated in Ruby > 1.9.2;
+        # consider using Addressable gem? chop URI at domain only? //jno 2017-09-11
         if uri.is_a? String
           # URI.parse will explode when given a character that it thinks
           # shouldn't appear in uris. We thus escape them before passing the
