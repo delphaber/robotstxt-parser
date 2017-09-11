@@ -9,13 +9,6 @@
 # Author::      Conrad Irwin <conrad@rapportive.com>, Simone Rinzivillo <srinzivillo@gmail.com>
 # License::     MIT License
 #
-#--
-#
-#++
-
-require 'robotstxt/common'
-require 'robotstxt/parser'
-require 'robotstxt/getter'
 
 # Provides a flexible interface to help authors of web-crawlers
 # respect the robots.txt exclusion standard.
@@ -23,9 +16,13 @@ require 'robotstxt/getter'
 module Robotstxt
 
   NAME            = 'Robotstxt'
-  GEM             = 'robotstxt'
+  GEM             = 'robotstxt-parser'
   AUTHORS         = ['Conrad Irwin <conrad@rapportive.com>', 'Simone Rinzivillo <srinzivillo@gmail.com>']
-  VERSION        = '1.0'
+  VERSION        = '0.1.1'
+
+  autoload :Parser,         'robotstxt/parser'
+  autoload :Getter,         'robotstxt/getter'
+  autoload :CommonMethods,  'robotstxt/common'
 
   # Obtains and parses a robotstxt file from the host identified by source,
   # source can either be a URI, a string representing a URI, or a Net::HTTP
@@ -58,36 +55,42 @@ module Robotstxt
   #   end
   # end
   #
-  def self.get(source, robot_id, options={})
-    self.parse(Getter.new.obtain(source, robot_id, options), robot_id)
+
+  class << self
+
+    def get(source, robot_id, options={})
+      parse(Getter.new.obtain(source, robot_id, options), robot_id)
+    end
+
+    # Parses the contents of a robots.txt file for the given robot_id
+    #
+    # Returns a Robotstxt::Parser object with methods .allowed? and
+    # .sitemaps, i.e.
+    #
+    # Robotstxt.parse("User-agent: *\nDisallow: /a", "SuperRobot").allowed? "/b"
+    #
+    def parse(robotstxt, robot_id)
+      Parser.new(robot_id, robotstxt)
+    end
+
+    # Gets a robotstxt file from the host identified by the uri
+    #  (which can be a URI object or a string)
+    #
+    # Parses it for the given robot_id
+    #  (which should be your user-agent)
+    #
+    # Returns true iff your robot can access said uri.
+    #
+    # Robotstxt.get_allowed? "http://www.example.com/good", "SuperRobot"
+    #
+    def get_allowed?(uri, robot_id)
+      get(uri, robot_id).allowed? uri
+    end
+
+    def ultimate_scrubber(str)
+      str.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
+    end
+
   end
 
-  # Parses the contents of a robots.txt file for the given robot_id
-  #
-  # Returns a Robotstxt::Parser object with methods .allowed? and
-  # .sitemaps, i.e.
-  #
-  # Robotstxt.parse("User-agent: *\nDisallow: /a", "SuperRobot").allowed? "/b"
-  #
-  def self.parse(robotstxt, robot_id)
-    Parser.new(robot_id, robotstxt)
-  end
-
-  # Gets a robotstxt file from the host identified by the uri
-  #  (which can be a URI object or a string)
-  #
-  # Parses it for the given robot_id
-  #  (which should be your user-agent)
-  #
-  # Returns true iff your robot can access said uri.
-  #
-  # Robotstxt.get_allowed? "http://www.example.com/good", "SuperRobot"
-  #
-  def self.get_allowed?(uri, robot_id)
-    self.get(uri, robot_id).allowed? uri
-  end
-
-  def self.ultimate_scrubber(str)
-    str.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
-  end
 end

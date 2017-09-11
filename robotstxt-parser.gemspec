@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-
 Gem::Specification.new do |gem|
   gem.name          = "robotstxt-parser"
   gem.version       = "0.1.1"
@@ -10,8 +9,8 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{Robotstxt-parser is an Ruby robots.txt file parser.}
   gem.homepage      = "https://github.com/gjtorikian/robotstxt-parser"
   gem.license       = "MIT"
-  gem.files         = `git ls-files`.split($/)
-  gem.test_files    = gem.files.grep(%r{^(text)/})
+  gem.files         = `git ls-files`.split($/).select {|f| f.match(%r{^(lib)/}) }
+  gem.test_files    = gem.files.grep(%r{^(test)/})
   gem.require_paths = ["lib"]
 
   gem.add_development_dependency "rake"

@@ -1,4 +1,3 @@
-
 module Robotstxt
   # Parses robots.txt files for the perusal of a single user-agent.
   #
