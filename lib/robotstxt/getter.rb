@@ -72,7 +72,7 @@ module Robotstxt
     # In the case that we can't decode, Ruby's laissez faire attitude to encoding
     # should mean that we have a reasonable chance of working anyway.
     def decode_body(response)
-      return "" if response.body.blank? || response.body.nil?
+      return "" if response.body.nil? || response.body.empty?
       Robotstxt.ultimate_scrubber(response.body)
     end
 

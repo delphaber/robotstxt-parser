@@ -3,7 +3,7 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'test/unit'
-require 'robotstxt'
+require 'robotstxt-parser'
 require 'cgi'
 
 class TestParser < Test::Unit::TestCase
