@@ -1,6 +1,7 @@
 language: ruby
 rvm:
-  - 2.0
+  - 2.7
+  - 3.0
 
 install:
   - bundle install
