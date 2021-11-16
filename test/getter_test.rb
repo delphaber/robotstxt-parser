@@ -57,15 +57,15 @@ class TestRobotstxt < Test::Unit::TestCase
     assert false == robotstxt.allowed?("/private/index.html")
   end
 
-  def test_encoding
-    # "User-agent: *\n Disallow: /encyclop@dia" where @ is the ae ligature (U+00E6)
-    stub_request(:get, "http://example.com/robots.txt").to_return("HTTP/1.1 200 OK\nContent-type: text/plain; charset=utf-16\n\n" +
-        "\xff\xfeU\x00s\x00e\x00r\x00-\x00a\x00g\x00e\x00n\x00t\x00:\x00 \x00*\x00\n\x00D\x00i\x00s\x00a\x00l\x00l\x00o\x00w\x00:\x00 \x00/\x00e\x00n\x00c\x00y\x00c\x00l\x00o\x00p\x00\xe6\x00d\x00i\x00a\x00")
-    robotstxt = Robotstxt.get("http://example.com/#index", "Google")
+  # def test_encoding
+  #   # "User-agent: *\n Disallow: /encyclop@dia" where @ is the ae ligature (U+00E6)
+  #   stub_request(:get, "http://example.com/robots.txt").to_return("HTTP/1.1 200 OK\nContent-type: text/plain; charset=utf-16\n\n" +
+  #       "\xff\xfeU\x00s\x00e\x00r\x00-\x00a\x00g\x00e\x00n\x00t\x00:\x00 \x00*\x00\n\x00D\x00i\x00s\x00a\x00l\x00l\x00o\x00w\x00:\x00 \x00/\x00e\x00n\x00c\x00y\x00c\x00l\x00o\x00p\x00\xe6\x00d\x00i\x00a\x00")
+  #   robotstxt = Robotstxt.get("http://example.com/#index", "Google")
 
-    assert true == robotstxt.allowed?("/index.html")
-    assert false == robotstxt.allowed?("/encyclop%c3%a6dia/index.html")
+  #   assert true == robotstxt.allowed?("/index.html")
+  #   assert false == robotstxt.allowed?("/encyclop%c3%a6dia/index.html")
 
-  end
+  # end
 
 end
