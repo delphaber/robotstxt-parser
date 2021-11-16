@@ -182,7 +182,7 @@ parameters in use.
 This library is intended to be installed via the
 RubyGems[http://rubyforge.org/projects/rubygems/] system.
 
-  $ gem install robotstxt
+gem 'robotstxt-parser', github: 'delphaber/robotstxt-parser', require: 'robotstxt'
 
 You might need administrator privileges on your system to install it.
 
