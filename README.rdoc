@@ -1,5 +1,7 @@
 = Robotstxt
 
+{<img src="https://app.travis-ci.com/delphaber/robotstxt-parser.svg?branch=master" alt="Build Status" />}[https://app.travis-ci.com/delphaber/robotstxt-parser]
+
 Robotstxt is an Ruby robots.txt file parser.
 
 The robots.txt exclusion protocol is a simple mechanism whereby site-owners can guide
