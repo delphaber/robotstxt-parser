@@ -165,7 +165,7 @@ module Robotstxt
         "%25#{code.upcase}"
       end
 
-      URI.unescape(path)
+      URI::DEFAULT_PARSER.unescape(path)
 
     end
 
