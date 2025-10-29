@@ -63,7 +63,7 @@ module Robotstxt
     def allowed?(uri)
 
       uri = objectify_uri(uri)
-      path = (uri.path || "/") + (uri.query ? '?' + uri.query : '')
+      path = (uri.path.empty? ? '/' : uri.path) + (uri.query ? '?' + uri.query : '')
       path_allowed?(@robot_id, path)
 
     end
