@@ -40,7 +40,7 @@ class TestRobotstxt < Test::Unit::TestCase
   def test_existing_http_connection
     stub_request(:get, "http://example.com/robots.txt").to_return(body: "User-agent:*\nDisallow: /test")
 
-    http = Net::HTTP.start("example.com", 80) do |http|
+    Net::HTTP.start("example.com", 80) do |http|
       robotstxt = Robotstxt.get(http, "Google")
       assert true == robotstxt.allowed?("/index.html")
       assert false == robotstxt.allowed?("/test/index.html")
