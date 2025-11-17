@@ -48,7 +48,7 @@ class TestRobotstxt < Test::Unit::TestCase
   end
 
   def test_redirects
-    stub_request(:get, "http://example.com/robots.txt").to_return("HTTP/1.1 303 See Other\nLocation: http://www.exemplar.com/robots.txt\n\n")
+    stub_request(:get, "http://example.com/robots.txt").to_return(status: [303, "See Other"], headers: {'Location' => 'http://www.exemplar.com/robots.txt'})
     stub_request(:get, "http://www.exemplar.com/robots.txt").to_return(body: "User-agent:*\nDisallow: /private")
 
     robotstxt = Robotstxt.get("http://example.com/", "Google")
