@@ -99,15 +99,11 @@ module Robotstxt
     # For consistency, and because it seems expected behaviour, and because
     # a glob * will match a literal * we use glob matching not string matching.
     #
-    # The standard also advocates a substring match of the robot's user-agent
-    # within the user-agent field. From observation, it seems much more likely
-    # that the match will be the other way about, though we check for both.
+    # The standard advocates a substring match of the robot's user-agent
+    # within the user-agent field.
     #
     def match_ua_glob(user_agent, glob)
-
-      glob =~ Regexp.new(Regexp.escape(user_agent), "i") ||
-          user_agent =~ Regexp.new(reify(glob), "i")
-
+      glob == "*" || user_agent =~ Regexp.new(Regexp.escape(glob), "i")
     end
 
     # This does case-sensitive prefix matching, such that if the path starts

@@ -91,6 +91,34 @@ ROBOTS
     assert false == Robotstxt::Parser.new("Bing", robotstxt).allowed?("/hello")
   end
 
+  def test_useragent_substring_match
+    robotstxt = <<-ROBOTS
+User-agent: HumbleCrawler
+Disallow: * 
+ROBOTS
+    
+    assert false == Robotstxt::Parser.new("HumbleCrawlerEn", robotstxt).allowed?("/en")
+    assert false == Robotstxt::Parser.new("HumbleCrawlerIt", robotstxt).allowed?("/it")
+
+    robotstxt = <<-ROBOTS
+User-agent: HumbleCrawlerIt    
+Disallow: /en
+
+User-agent: HumbleCrawlerEn
+Disallow: /it
+ROBOTS
+
+    assert false == Robotstxt::Parser.new("HumbleCrawlerEn", robotstxt).allowed?("/it")
+    assert true == Robotstxt::Parser.new("HumbleCrawlerEn", robotstxt).allowed?("/en")
+    assert true == Robotstxt::Parser.new("HumbleCrawlerEn", robotstxt).allowed?("/es")
+
+    assert false == Robotstxt::Parser.new("HumbleCrawlerIt", robotstxt).allowed?("/en")
+    assert true == Robotstxt::Parser.new("HumbleCrawlerIt", robotstxt).allowed?("/it")
+    assert true == Robotstxt::Parser.new("HumbleCrawlerIt", robotstxt).allowed?("/es")
+    
+    assert true == Robotstxt::Parser.new("OtherCrawler", robotstxt).allowed?("/it")
+  end
+
   def test_missing_useragent
     robotstxt = <<-ROBOTS
 Disallow: /index
