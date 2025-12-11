@@ -128,7 +128,7 @@ module Robotstxt
 
       if glob =~ /\$$/
         end_marker = '(?:\?|$)'
-        glob = glob.gsub /\$$/, ""
+        glob = glob.gsub(/\$$/, "")
       else
         end_marker = ""
       end
@@ -161,7 +161,7 @@ module Robotstxt
         "%25#{code.upcase}"
       end
 
-      URI::DEFAULT_PARSER.unescape(path)
+      URI::RFC2396_PARSER.unescape(path)
 
     end
 
@@ -213,7 +213,7 @@ module Robotstxt
 
       body.split(/[\r\n]+/).each do |line|
         prefix, value = line.delete("\000").split(":", 2).map(&:strip)
-        value.sub! /\s+#.*/, '' if value
+        value.sub!(/\s+#.*/, '') if value
         parser_mode = :begin
 
         if prefix && value
