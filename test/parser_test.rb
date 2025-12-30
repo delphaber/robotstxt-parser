@@ -139,4 +139,31 @@ ROBOTS
     end
   end
 
+  def test_specific_useragent_should_take_precedence_over_wildcard
+    # According to the robots.txt standard (RFC 9309), when multiple groups
+    # match a user-agent, the most specific one should be used, not the first one.
+    # A specific user-agent section should take precedence over the wildcard (*).
+    robotstxt = <<-ROBOTS
+User-agent: *
+Disallow: /forbidden
+Disallow: /orange
+
+User-agent: SearchEngineBot
+Allow: /
+ROBOTS
+
+    # SearchEngineBot should use its specific section, not the wildcard
+    assert true == Robotstxt::Parser.new("SearchEngineBot", robotstxt).allowed?("/forbidden")
+    assert true == Robotstxt::Parser.new("SearchEngineBot", robotstxt).allowed?("/orange")
+    assert true == Robotstxt::Parser.new("SearchEngineBot", robotstxt).allowed?("/anything")
+
+    # Other bots should still use the wildcard section
+    assert false == Robotstxt::Parser.new("Googlebot", robotstxt).allowed?("/forbidden")
+    assert false == Robotstxt::Parser.new("Googlebot", robotstxt).allowed?("/orange")
+    assert true == Robotstxt::Parser.new("Googlebot", robotstxt).allowed?("/anything")
+
+    # Also test with user-agent suffix matching (substring match)
+    assert true == Robotstxt::Parser.new("SearchEngineBotCustomSuffix", robotstxt).allowed?("/forbidden")
+  end
+
 end

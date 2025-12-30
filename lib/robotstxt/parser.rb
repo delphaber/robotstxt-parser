@@ -18,9 +18,10 @@ module Robotstxt
   # The file is divided into sections, each of which contains one or more User-agent:
   # lines, followed by one or more Allow: or Disallow: rules.
   #
-  # The first section that contains a User-agent: line that matches the robot's
-  # user-agent, is the only section that relevent to that robot. The sections are checked
-  # in the same order as they appear in the file.
+  # According to RFC 9309 (https://www.rfc-editor.org/rfc/rfc9309.html#section-2.2.1),
+  # when multiple groups match a user-agent, the most specific one is used.
+  # A specific user-agent section takes precedence over the wildcard (*).
+  # Among sections of the same specificity, the first match in file order is used.
   #
   # (The * character is taken to mean "any number of any characters" during matching of
   #  user-agents)
@@ -73,18 +74,32 @@ module Robotstxt
     # Check whether the relative path (a string of the url's path and query
     # string) is allowed by the rules we have for the given user_agent.
     #
+    # According to RFC 9309, when multiple groups match a user-agent, the most
+    # specific one should be used. A specific user-agent takes precedence over
+    # the wildcard (*).
+    #
     def path_allowed?(user_agent, path)
+      specific_match = nil
+      wildcard_match = nil
 
       @rules.each do |(ua_glob, path_globs)|
-
         if match_ua_glob user_agent, ua_glob
-          path_globs.each do |(path_glob, allowed)|
-            return allowed if match_path_glob path, path_glob
+          if ua_glob == "*"
+            wildcard_match ||= path_globs
+          else
+            specific_match ||= path_globs
           end
-          return true
         end
-
       end
+
+      path_globs = specific_match || wildcard_match
+
+      if path_globs
+        path_globs.each do |(path_glob, allowed)|
+          return allowed if match_path_glob path, path_glob
+        end
+      end
+
       true
     end
 
@@ -128,7 +143,7 @@ module Robotstxt
 
       if glob =~ /\$$/
         end_marker = '(?:\?|$)'
-        glob = glob.gsub /\$$/, ""
+        glob = glob.gsub(/\$$/, "")
       else
         end_marker = ""
       end
@@ -161,7 +176,7 @@ module Robotstxt
         "%25#{code.upcase}"
       end
 
-      URI::DEFAULT_PARSER.unescape(path)
+      URI::RFC2396_PARSER.unescape(path)
 
     end
 
@@ -213,7 +228,7 @@ module Robotstxt
 
       body.split(/[\r\n]+/).each do |line|
         prefix, value = line.delete("\000").split(":", 2).map(&:strip)
-        value.sub! /\s+#.*/, '' if value
+        value.sub!(/\s+#.*/, '') if value
         parser_mode = :begin
 
         if prefix && value
